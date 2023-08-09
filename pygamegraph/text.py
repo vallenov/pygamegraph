@@ -10,7 +10,8 @@ class Text(pygame.sprite.Sprite):
         self.font = pygame.font.SysFont(pygame.font.match_font('arial'), self.size)
         self.text = ''
         self.angle = 0
-        self.text_surface = self.font.render(str(self.text), True, Constants.BLACK.value)
+        self.color = Constants.BLACK.value
+        self.text_surface = self.font.render(str(self.text), True, self.color)
         self.text_rect = self.text_surface.get_rect()
 
     def update(self, xy: tuple, color: tuple, text=''):
