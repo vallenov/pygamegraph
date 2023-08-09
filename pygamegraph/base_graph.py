@@ -8,7 +8,13 @@ class BaseGraph(pygame.sprite.Sprite):
     """
         Base graph class
     """
-    def __init__(self, size: tuple, x: list, y: list):
+    def __init__(
+            self,
+            size: tuple,
+            x: list,
+            y: list,
+            text_size: int = 20
+    ):
         """
         :param size:
         :param x: first list
@@ -18,19 +24,21 @@ class BaseGraph(pygame.sprite.Sprite):
         self.x_list = x
         self.y_list = y
         self.size = size  # size of graph
-        self._common_text_size = (self.size[0] + self.size[1]) // 20
-        self._title_text_size = (self.size[0] + self.size[1]) // 15
-        self.scale = 20
+        self.xscale = len(self.x_list) or 1
+        self.yscale = len(self.y_list) or 1
+        self.grid = False
+        self.color = Constants.BLACK.value
         self.line_color = Constants.BLACK.value  # line color
-        self.part_size = self.size[0] / self.scale
+        self.line_width = 1
+        self.part_size = self.size[0] / self.xscale
         self.image = pygame.Surface(size, 5)
         self.image.fill(Constants.BLACK.value)
         self.rect = self.image.get_rect()
-        self.y_top_text = Text(self._common_text_size)  # print max(self.y_list) on the left-top edge
-        self.x_bottom_text = Text(self._common_text_size)  # print last element self.x_list on the right-bottom edge
-        self.title = Text(self._title_text_size)
-        self.xlabel = Text(self._common_text_size)  # name of x axis
-        self.ylabel = Text(self._common_text_size)  # name of y axis
+        self.y_top_text = Text(text_size)  # print max(self.y_list) on the left-top edge
+        self.x_bottom_text = Text(text_size)  # print last element self.x_list on the right-bottom edge
+        self.title = Text(text_size)
+        self.xlabel = Text(text_size)  # name of x axis
+        self.ylabel = Text(text_size)  # name of y axis
         self.ylabel.angle = 90
 
     @staticmethod
@@ -65,19 +73,42 @@ class BaseGraph(pygame.sprite.Sprite):
                            color=Constants.BLACK.value)
         self.title.update(xy=(self.rect.centerx, self.rect.top - self.title.size),
                           color=Constants.BLACK.value)
-        self.scale = len(self.x_list)
+        self.xscale = len(self.x_list)
+
+    def draw_grid(self):
+        startxy = (self.rect.left, self.rect.bottom)
+        for row in range(len(self.x_list) - 1):
+            pygame.draw.line(
+                pygame.display.get_surface(),
+                     self.color,
+            (startxy[0] + self.size[0] // self.xscale, startxy[1]),
+             (startxy[0] + self.size[0] // self.xscale, startxy[1] - self.size[1]),
+                1
+            )
+            startxy = (startxy[0] + self.xscale), startxy[1]
+            for col in range(len(self.y_list)):
+                pass
 
     def draw(self):
-        pygame.draw.rect(pygame.display.get_surface(), Constants.BLACK.value, self, 1)
+        pygame.draw.rect(pygame.display.get_surface(), self.color, self, self.line_width)
         percent = max(self.y_list) if max(self.y_list) > 0 else 1
         startxy = (self.rect.left, self.rect.bottom)
-        self.part_size = self.size[0] / self.scale
+        self.part_size = self.size[0] / self.xscale
         self.title.draw()
         self.y_top_text.draw()
         self.x_bottom_text.draw()
         self.ylabel.draw()
         self.xlabel.draw()
-        for part in range(self.scale):
+        for part in range(self.xscale):
+            if self.grid:
+                pygame.draw.line(
+                    pygame.display.get_surface(),
+                    self.color,
+                    (startxy[0], self.rect.bottom),
+                    (startxy[0], self.rect.top),
+                    1
+                )
+
             pygame.draw.line(pygame.display.get_surface(),
                              self.line_color,
                              startxy,
