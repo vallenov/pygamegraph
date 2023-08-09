@@ -3,8 +3,8 @@ import random
 
 from pygamegraph.base_graph import BaseGraph
 
-HEIGHT = 500
-WIDTH = 800
+HEIGHT = 700
+WIDTH = 1000
 MAXLEN = 20
 FPS = 10
 GREEN = (50, 100, 50)
@@ -30,7 +30,10 @@ class Example:
         )
         graph.rect.left = 30  # left graph edge
         graph.rect.top = 30  # top graph edge
-        graph.color = BLUE  # color of the line
+        graph.title.text = 'Title'
+        graph.xlabel.text = 'Text1'
+        graph.ylabel.text = 'Text2'
+        graph.line_color = BLUE  # color of the line
         running = True
         while running:
             self.clock.tick(FPS)
