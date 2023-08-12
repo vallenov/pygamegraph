@@ -67,27 +67,13 @@ class BaseGraph(pygame.sprite.Sprite):
                                   xy=(self.rect.right, self.rect.bottom + self.ylabel.size // 4),
                                   color=Constants.BLACK.value)
         self.ylabel.update(xy=(self.rect.left - self.ylabel.size // 2,
-                                self.rect.top + self.ylabel.size * 2),
+                               self.rect.top + self.ylabel.size * 2),
                            color=Constants.BLACK.value)
-        self.xlabel.update(xy=(self.rect.centerx, self.rect.bottom + 5),
+        self.xlabel.update(xy=(self.rect.centerx, self.rect.bottom + self.x_bottom_text.size),
                            color=Constants.BLACK.value)
         self.title.update(xy=(self.rect.centerx, self.rect.top - self.title.size),
                           color=Constants.BLACK.value)
         self.xscale = len(self.x_list)
-
-    def draw_grid(self):
-        startxy = (self.rect.left, self.rect.bottom)
-        for row in range(len(self.x_list) - 1):
-            pygame.draw.line(
-                pygame.display.get_surface(),
-                     self.color,
-            (startxy[0] + self.size[0] // self.xscale, startxy[1]),
-             (startxy[0] + self.size[0] // self.xscale, startxy[1] - self.size[1]),
-                1
-            )
-            startxy = (startxy[0] + self.xscale), startxy[1]
-            for col in range(len(self.y_list)):
-                pass
 
     def draw(self):
         pygame.draw.rect(pygame.display.get_surface(), self.color, self, self.line_width)
@@ -108,7 +94,12 @@ class BaseGraph(pygame.sprite.Sprite):
                     (startxy[0], self.rect.top),
                     1
                 )
-
+            number = Text(15)
+            number.update(
+                text=f'{self.x_list[part]}',
+                xy=(startxy[0], self.rect.bottom + number.size // 2),
+                color=Constants.BLACK.value)
+            number.draw()
             pygame.draw.line(pygame.display.get_surface(),
                              self.line_color,
                              startxy,
