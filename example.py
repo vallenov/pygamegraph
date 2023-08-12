@@ -26,13 +26,22 @@ class Example:
         graph = BaseGraph(
             x=first,
             y=second,
-            size=(250, 150)
+            size=(650, 250)
         )
-        graph.rect.left = 30  # left graph edge
-        graph.rect.top = 30  # top graph edge
+        graph.rect.left = 50  # left graph edge
+        graph.rect.top = 50  # top graph edge
+
         graph.title.text = 'Title'
+        graph.title.size = 30
+
         graph.xlabel.text = 'Text1'
+        graph.xlabel.size = 25
+
         graph.ylabel.text = 'Text2'
+        graph.ylabel.size = 25
+
+        graph.grid = True
+
         graph.line_color = BLUE  # color of the line
         running = True
         while running:
