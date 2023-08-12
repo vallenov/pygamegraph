@@ -26,10 +26,10 @@ class Example:
         graph = BaseGraph(
             x=first,
             y=second,
-            size=(650, 150)
+            size=(650, 250)
         )
-        graph.rect.left = 30  # left graph edge
-        graph.rect.top = 30  # top graph edge
+        graph.rect.left = 50  # left graph edge
+        graph.rect.top = 50  # top graph edge
 
         graph.title.text = 'Title'
         graph.title.size = 30
