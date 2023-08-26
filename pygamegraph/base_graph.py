@@ -25,15 +25,12 @@ class BaseGraph(pygame.sprite.Sprite):
         self.y_list = y
         self.size = size  # size of graph
         self.xscale = len(self.x_list) or 1
-        self.yscale = len(self.y_list) or 1
-        self.ycompress_value = 10
+        self.yscale = 10
         self.grid = False
         self.color = Constants.BLACK.value
         self.line_color = Constants.BLACK.value  # line color
         self.line_width = 1
         self.xpart_size = self.size[0] / self.xscale
-        self.ypart_size = self.size[1] / self.yscale
-        print(self.ypart_size)
         self.image = pygame.Surface(size, 5)
         self.image.fill(Constants.BLACK.value)
         self.rect = self.image.get_rect()
@@ -83,7 +80,7 @@ class BaseGraph(pygame.sprite.Sprite):
                 (self.rect.left + (xpart * self.xpart_size), self.rect.top),
                 1
             )
-        for ypart in range(1, 11):
+        for ypart in range(1, self.yscale):
             pygame.draw.line(
                 pygame.display.get_surface(),
                 self.color,
@@ -107,7 +104,7 @@ class BaseGraph(pygame.sprite.Sprite):
             )
             number.draw()
         y_num_len = len(str(max(self.y_list)))
-        for ypart in range(1, 11):
+        for ypart in range(1, self.yscale):
             number = Text(15)
             number.update(
                 text=f'{(max_y_list / 10) * ypart:.{y_num_len + 1}}',
@@ -120,6 +117,8 @@ class BaseGraph(pygame.sprite.Sprite):
             number.draw()
 
     def draw(self):
+        self.xscale = len(self.x_list) or 1
+        self.xpart_size = self.size[0] / self.xscale
         pygame.draw.rect(pygame.display.get_surface(), self.color, self, self.line_width)
         max_y_list = max(self.y_list)
         percent = self.size[1] / max_y_list
