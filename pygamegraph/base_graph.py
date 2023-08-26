@@ -26,11 +26,14 @@ class BaseGraph(pygame.sprite.Sprite):
         self.size = size  # size of graph
         self.xscale = len(self.x_list) or 1
         self.yscale = len(self.y_list) or 1
+        self.ycompress_value = 10
         self.grid = False
         self.color = Constants.BLACK.value
         self.line_color = Constants.BLACK.value  # line color
         self.line_width = 1
         self.xpart_size = self.size[0] / self.xscale
+        self.ypart_size = self.size[1] / self.yscale
+        print(self.ypart_size)
         self.image = pygame.Surface(size, 5)
         self.image.fill(Constants.BLACK.value)
         self.rect = self.image.get_rect()
@@ -72,69 +75,71 @@ class BaseGraph(pygame.sprite.Sprite):
         self.xscale = len(self.x_list)
 
     def draw_grid(self):
-        max_y_list = max(self.y_list)
-        startxy = (self.rect.left, self.rect.bottom)
-        percent = max_y_list if max(self.y_list) > 0 else 1
         for xpart in range(self.xscale):
             pygame.draw.line(
                 pygame.display.get_surface(),
                 self.color,
-                (startxy[0], self.rect.bottom),
-                (startxy[0], self.rect.top),
+                (self.rect.left + (xpart * self.xpart_size), self.rect.bottom),
+                (self.rect.left + (xpart * self.xpart_size), self.rect.top),
                 1
             )
-            number = Text(15)
-            number.update(
-                text=f'{self.x_list[xpart]}',
-                xy=(startxy[0], self.rect.bottom + number.size // 2),
-                color=Constants.BLACK.value
-            )
-            number.draw()
-            startxy = (
-                self.rect.left + int((xpart + 1) * self.xpart_size),
-                self.rect.bottom - int((self.y_list[xpart] / percent) * self.size[1])
-            )
-        startxy = (self.rect.left, self.rect.bottom - self.size[1] // 10)
         for ypart in range(1, 11):
             pygame.draw.line(
                 pygame.display.get_surface(),
                 self.color,
-                (self.rect.left, startxy[1]),
-                (self.rect.right, startxy[1]),
+                (
+                    self.rect.left, self.rect.bottom - ((self.size[1] // 10) * ypart)
+                ),
+                (
+                    self.rect.right, self.rect.bottom - ((self.size[1] // 10) * ypart)
+                ),
                 1
             )
+
+    def draw_values(self):
+        max_y_list = max(self.y_list)
+        for xpart in range(self.xscale):
             number = Text(15)
             number.update(
-                text=f'{(max_y_list // 10) * ypart}',
-                xy=(self.rect.left - number.size - len(str(max_y_list)) // 2, startxy[1]),
+                text=f'{self.x_list[xpart]}',
+                xy=(self.rect.left + (xpart * self.xpart_size), self.rect.bottom + number.size // 2),
                 color=Constants.BLACK.value
             )
             number.draw()
-            startxy = (
-                0,
-                self.rect.bottom - ((self.size[1] // 10) * ypart)
+        y_num_len = len(str(max(self.y_list)))
+        for ypart in range(1, 11):
+            number = Text(15)
+            number.update(
+                text=f'{(max_y_list / 10) * ypart:.{y_num_len + 1}}',
+                xy=(
+                    self.rect.left - number.size - len(str(max_y_list)) // 2,
+                    self.rect.bottom - ((self.size[1] // 10) * ypart) - (number.size / 3)
+                ),
+                color=Constants.BLACK.value
             )
+            number.draw()
 
     def draw(self):
         pygame.draw.rect(pygame.display.get_surface(), self.color, self, self.line_width)
-        percent = max(self.y_list) if max(self.y_list) > 0 else 1
-        startxy = (self.rect.left, self.rect.bottom)
-        self.xpart_size = self.size[0] / self.xscale
+        max_y_list = max(self.y_list)
+        percent = self.size[1] / max_y_list
         self.title.draw()
         self.ylabel.draw()
         self.xlabel.draw()
         if self.grid:
             self.draw_grid()
-        for part in range(self.xscale):
+        self.draw_values()
+        for part in range(self.xscale-1):
             pygame.draw.line(
                 pygame.display.get_surface(),
                 self.line_color,
-                startxy,
                 (
-                   self.rect.left + int((part + 1) * self.xpart_size),
-                   self.rect.bottom - (self.y_list[part] / percent) * self.size[1]
+                    self.rect.left + part * self.xpart_size,
+                    self.rect.bottom - self.y_list[part] * percent
+                ),
+                (
+                   self.rect.left + (part + 1) * self.xpart_size,
+                   self.rect.bottom - self.y_list[part+1] * percent
                 ),
                 2
             )
-            startxy = (self.rect.left + int((part + 1) * self.xpart_size),
-                       self.rect.bottom - int((self.y_list[part] / percent) * self.size[1]))
