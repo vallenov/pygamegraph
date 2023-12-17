@@ -6,8 +6,8 @@ from pygamegraph.base_graph import BaseGraph
 HEIGHT = 700
 WIDTH = 1000
 MAXLEN = 20
-FPS = 10
-GREEN = (50, 100, 50)
+FPS = 1
+GREEN = (255, 255, 255)
 BLUE = (0, 0, 255)
 
 
@@ -19,14 +19,14 @@ class Example:
     clock = pygame.time.Clock()
 
     def run(self):
-        first = []
-        second = []
+        first = []#[i for i in range(20)]
+        second = []#[0 for _ in range(20)]
 
         # init graph
         graph = BaseGraph(
             x=first,
             y=second,
-            size=(650, 250)
+            size=(650, 550)
         )
         graph.rect.left = 50  # left graph edge
         graph.rect.top = 50  # top graph edge
@@ -50,10 +50,12 @@ class Example:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            first.append(random.randint(0, 20))
+            # first.append(random.randint(0, 20))
+            first.append(first[-1] + 1 if first else 0)
             if len(first) > MAXLEN:
                 first.pop(0)
-            second.append(random.randint(0, 400))
+            second.append(random.randint(0, 100))
+            print(second)
             if len(second) > MAXLEN:
                 second.pop(0)
             graph.update()
